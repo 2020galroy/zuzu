@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>זוזו — לומדה</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  min-height: 100vh;
+}
+
+/* ── מסך פתיחה ── */
+#screen-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.zuzu-logo {
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+}
+
+.zuzu-tagline {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+.welcome-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.welcome-card h2 {
+  font-size: 20px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  text-align: right;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #2a2a2a;
+  border: 2px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  text-align: right;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #f5a623;
+}
+
+.age-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.age-btn {
+  flex: 1;
+  padding: 12px 8px;
+  background: #2a2a2a;
+  border: 2px solid #333;
+  border-radius: 8px;
+  color: #ccc;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.age-btn:hover { border-color: #666; color: #fff; }
+
+.age-btn.selected { font-weight: bold; }
+.age-btn.easy.selected   { border-color: #2ecc71; background: #0d2a1a; color: #2ecc71; }
+.age-btn.medium.selected { border-color: #f5a623; background: #2a1a00; color: #f5a623; }
+.age-btn.hard.selected   { border-color: #e74c3c; background: #2a0a0a; color: #e74c3c; }
+
+.start-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: #f5a623;
+  color: #111;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.start-btn:hover { background: #ffb733; }
+.start-btn:disabled { background: #555; color: #888; cursor: default; }
+
+/* ── מסך הלומדה ── */
+#screen-episode {
+  display: none;
+  padding: 20px 10px;
+}
+
+.episode-header {
+  margin-bottom: 20px;
+}
+
+.episode-header h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.episode-subtitle {
+  color: #888;
+  font-size: 13px;
+}
+
+.player-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* ── ייבוא תוכן הפרק ── */
+#episode-content { }
+
+</style>
+</head>
+<body>
+
+<!-- מסך פתיחה -->
+<div id="screen-welcome">
+  <div class="zuzu-logo" id="zuzu-logo">זוזו</div>
+  <div class="zuzu-tagline">מגלים את המדע שמסביבנו</div>
+
+  <div class="welcome-card">
+    <h2>מי משחק? 👋</h2>
+
+    <div class="input-group">
+      <label>השם שלי</label>
+      <input type="text" id="input-name" placeholder="למשל: דןדן" maxlength="20">
+    </div>
+
+    <div class="input-group">
+      <label>כמה אני בן/בת?</label>
+      <div class="age-buttons">
+        <button class="age-btn easy"   onclick="selectAge(this, 6)"  >🟢 5–7</button>
+        <button class="age-btn medium" onclick="selectAge(this, 9)"  >🟡 8–10</button>
+        <button class="age-btn hard"   onclick="selectAge(this, 12)" >🔴 11–14</button>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn" onclick="startEpisode()" disabled>
+      יאללה נתחיל! 🚀
+    </button>
+  </div>
+</div>
+
+<!-- מסך הפרק — נטען דינמית -->
+<div id="screen-episode">
+  <div class="episode-header">
+    <h1 id="ep-title"></h1>
+    <div class="episode-subtitle" id="ep-subtitle"></div>
+    <div class="player-badge" id="player-badge"></div>
+  </div>
+  <div id="episode-content"></div>
+</div>
+
+<script>
+// ===================================================
+// מנוע זוזו — engine.js
+// ===================================================
+
+let playerName = '';
+let playerAge  = 0;
+
+// בחירת גיל
+function selectAge(btn, age) {
+  document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  playerAge = age;
+  checkReady();
+}
+
+// בדיקה שאפשר להתחיל
+document.getElementById('input-name').addEventListener('input', checkReady);
+
+function checkReady() {
+  const name = document.getElementById('input-name').value.trim();
+  const ready = name.length > 0 && playerAge > 0;
+  document.getElementById('start-btn').disabled = !ready;
+}
+
+// התחלת פרק
+function startEpisode() {
+  playerName = document.getElementById('input-name').value.trim();
+
+  // שמירה ב-localStorage
+  localStorage.setItem('zuzu_player', JSON.stringify({
+    name: playerName,
+    age: playerAge,
+    lastVisit: new Date().toISOString()
+  }));
+
+  // מעבר למסך הפרק
+  document.getElementById('screen-welcome').style.display = 'none';
+  document.getElementById('screen-episode').style.display  = 'block';
+
+  // כותרת הפרק
+  document.getElementById('ep-title').textContent    = EPISODE_CONFIG.title;
+  document.getElementById('ep-subtitle').textContent = EPISODE_CONFIG.subtitle;
+
+  const badge = document.getElementById('player-badge');
+  badge.textContent = '👤 ' + playerName;
+  badge.style.background = EPISODE_CONFIG.color + '22';
+  badge.style.border      = '1px solid ' + EPISODE_CONFIG.color;
+  badge.style.color       = EPISODE_CONFIG.color;
+
+  // טעינת הסימולטור של הפרק
+  loadSimulator();
+}
+
+// שחזור שם אחרון
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('zuzu_player');
+  if (saved) {
+    const p = JSON.parse(saved);
+    document.getElementById('input-name').value = p.name;
+    checkReady();
+  }
+});
+</script>
+
+<!-- טעינת הפרק הנוכחי -->
+<script src="episodes/01-f1-senna/config.js"></script>
+<script src="episodes/01-f1-senna/questions.js"></script>
+<script src="episodes/01-f1-senna/simulator.js"></script>
+
+</body>
+</html>
