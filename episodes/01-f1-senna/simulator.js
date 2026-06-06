@@ -64,6 +64,23 @@ canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4p
   cursor:pointer; transition:all 0.15s; box-shadow:0 3px 12px rgba(231,76,60,0.35); font-weight:bold; }
 #run-btn:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(231,76,60,0.45); }
 
+/* פס פיזיקה חי */
+#physics-bar {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:6px;
+  max-width:720px; margin:10px auto 6px;
+  background:#fff; border-radius:14px; padding:12px 10px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.07);
+}
+.pb-cell { text-align:center; min-width:80px; flex:1; }
+.pb-label { font-size:11px; color:#aaa; font-weight:bold; margin-bottom:3px; }
+.pb-val { font-size:20px; font-weight:900; line-height:1.1; }
+.pb-sub { font-size:10px; color:#ccc; margin-top:2px; }
+.pb-divider { width:1px; background:#eee; margin:0 4px; align-self:stretch; }
+.pb-result-cell { background:#f8f8f8; border-radius:10px; padding:6px 4px; }
+.pb-result { font-size:18px; }
+.pb-green { color:#1a8a47 !important; }
+.pb-red   { color:#c0392b !important; }
+
 /* שלב מעבדה */
 #lab-banner { display:none; max-width:720px; margin:14px auto 0; background:#f0fff4;
   border:2px solid #2ecc71; border-radius:14px; padding:18px 22px; text-align:right; box-shadow:0 2px 10px rgba(46,204,113,0.15); }
@@ -277,14 +294,67 @@ canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4p
           </div>
           <div class="panel track-panel" style="flex:1;min-width:0;">
             <h3>🏁 מסלול</h3>
-            <button class="opt-btn" onclick="selTrack(this,50,'מונאקו','🇲🇨 מונאקו')">🇲🇨 מונאקו</button>
-            <button class="opt-btn" onclick="selTrack(this,150,'Eau Rouge','🇧🇪 Eau Rouge')">🇧🇪 Eau Rouge</button>
-            <button class="opt-btn selected" onclick="selTrack(this,250,'מונזה','🇮🇹 מונזה')">🇮🇹 מונזה</button>
-            <div style="font-size:11px;color:#aaa;margin-top:6px;text-align:center;" id="track-radius-info">רדיוס: 250 מ'</div>
+            <button class="opt-btn" onclick="selTrack(this,50,'מונאקו')">🇲🇨 מונאקו</button>
+            <button class="opt-btn" onclick="selTrack(this,150,'Eau Rouge')">🇧🇪 Eau Rouge</button>
+            <button class="opt-btn selected" onclick="selTrack(this,250,'מונזה')">🇮🇹 מונזה</button>
+            <!-- ויזואל קשת -->
+            <div style="display:flex;align-items:center;justify-content:center;margin-top:10px;gap:6px;">
+              <div id="corner-arc" style="
+                width:44px;height:44px;
+                border:6px solid #1abc9c;
+                border-radius:0 0 0 100%;
+                border-top-color:transparent;
+                border-right-color:transparent;
+                transition:border-radius 0.4s;
+              "></div>
+              <div style="text-align:right;">
+                <div id="track-radius-big" style="font-size:22px;font-weight:900;color:#0e8c7a;line-height:1;">250</div>
+                <div style="font-size:11px;color:#aaa;">מטר רדיוס</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- פס פיזיקה חי -->
+  <div id="physics-bar">
+    <div class="pb-cell">
+      <div class="pb-label">רדיוס הפנייה</div>
+      <div class="pb-val" id="pb-radius" style="color:#0e8c7a;">250 מ'</div>
+      <div class="pb-sub" id="pb-radius-cmp">רחב</div>
+    </div>
+    <div class="pb-divider"></div>
+    <div class="pb-cell">
+      <div class="pb-label">G נדרש — F1</div>
+      <div class="pb-val" id="pb-req-f1" style="color:#d4880a;">—</div>
+      <div class="pb-sub">v²÷(r×9.81)</div>
+    </div>
+    <div class="pb-cell">
+      <div class="pb-label">G זמין — F1</div>
+      <div class="pb-val" id="pb-avail-f1" style="color:#d4880a;">—</div>
+      <div class="pb-sub">לפי צמיג+מזג</div>
+    </div>
+    <div class="pb-cell pb-result-cell">
+      <div class="pb-label">F1 תחזיק?</div>
+      <div class="pb-val pb-result" id="pb-ok-f1">—</div>
+    </div>
+    <div class="pb-divider"></div>
+    <div class="pb-cell">
+      <div class="pb-label">G נדרש — אבא</div>
+      <div class="pb-val" id="pb-req-maz" style="color:#2176ae;">—</div>
+      <div class="pb-sub">v²÷(r×9.81)</div>
+    </div>
+    <div class="pb-cell">
+      <div class="pb-label">G זמין — אבא</div>
+      <div class="pb-val" id="pb-avail-maz" style="color:#2176ae;">—</div>
+      <div class="pb-sub">לפי מזג אוויר</div>
+    </div>
+    <div class="pb-cell pb-result-cell">
+      <div class="pb-label">אבא יחזיק?</div>
+      <div class="pb-val pb-result" id="pb-ok-maz">—</div>
     </div>
   </div>
 
@@ -373,6 +443,7 @@ function initSimulator() {
     document.getElementById('f1-spd-disp').textContent = v;
     document.getElementById('f1-apex-disp').textContent = `Apex: ~${apexS(+v)} קמ"ש`;
     document.getElementById('f1-exit-disp').textContent = `יציאה: ~${exitS(+v)} קמ"ש`;
+    updatePhysicsBar();
   };
 
   window.updateMaz = v => {
@@ -380,26 +451,64 @@ function initSimulator() {
     document.getElementById('maz-spd-disp').textContent = v;
     document.getElementById('maz-apex-disp').textContent = `Apex: ~${apexS(+v)} קמ"ש`;
     document.getElementById('maz-exit-disp').textContent = `יציאה: ~${exitS(+v)} קמ"ש`;
+    updatePhysicsBar();
   };
 
   window.selTire = (btn, t) => {
     document.querySelectorAll('.f1-panel .opt-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     tireType = t;
+    updatePhysicsBar();
   };
 
   window.selWeather = (btn, w) => {
     document.querySelectorAll('.weather-panel .opt-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     weather = w;
+    updatePhysicsBar();
   };
 
-  window.selTrack = (btn, radius, name, label) => {
+  window.selTrack = (btn, radius, name) => {
     document.querySelectorAll('.track-panel .opt-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     trackRadius = radius;
-    document.getElementById('track-radius-info').textContent = `רדיוס פנייה: ${radius} מטר`;
+    // עדכון מספר הרדיוס
+    document.getElementById('track-radius-big').textContent = radius;
+    // עדכון ויזואל קשת — מונאקו הדוק = border-radius גדול יותר (קשת קטנה)
+    const arc = document.getElementById('corner-arc');
+    if (radius === 50)       arc.style.borderRadius = '0 0 0 95%';
+    else if (radius === 150) arc.style.borderRadius = '0 0 0 70%';
+    else                     arc.style.borderRadius = '0 0 0 45%';
+    updatePhysicsBar();
   };
+
+  function updatePhysicsBar() {
+    const G = 9.81;
+    const f1Ms  = f1Speed / 3.6;
+    const mazMs = mazSpeed / 3.6;
+    const reqF1  = (f1Ms * f1Ms) / (trackRadius * G);
+    const reqMaz = (mazMs * mazMs) / (trackRadius * G);
+    const availF1  = F1_GRIP[tireType][weather];
+    const availMaz = MAZ_GRIP[weather];
+    const f1Ok  = availF1  >= reqF1;
+    const mazOk = availMaz >= reqMaz;
+
+    document.getElementById('pb-req-f1').textContent    = reqF1.toFixed(2) + 'G';
+    document.getElementById('pb-avail-f1').textContent  = availF1.toFixed(1) + 'G';
+    document.getElementById('pb-req-maz').textContent   = reqMaz.toFixed(2) + 'G';
+    document.getElementById('pb-avail-maz').textContent = availMaz.toFixed(2) + 'G';
+
+    const okF1El  = document.getElementById('pb-ok-f1');
+    const okMazEl = document.getElementById('pb-ok-maz');
+    okF1El.textContent  = f1Ok  ? '✅ כן' : '❌ לא';
+    okMazEl.textContent = mazOk ? '✅ כן' : '❌ לא';
+    okF1El.className  = 'pb-val pb-result ' + (f1Ok  ? 'pb-green' : 'pb-red');
+    okMazEl.className = 'pb-val pb-result ' + (mazOk ? 'pb-green' : 'pb-red');
+
+    document.getElementById('pb-radius').textContent = trackRadius + ' מ\'';
+    const cmp = trackRadius === 50 ? '🔴 הדוק מאוד' : trackRadius === 150 ? '🟡 בינוני' : '🟢 רחב';
+    document.getElementById('pb-radius-cmp').textContent = cmp;
+  }
 
   // ---- ציור מסלול ----
   function drawTrack() {
@@ -591,6 +700,7 @@ function initSimulator() {
   };
 
   drawTrack();
+  updatePhysicsBar();
 }
 
 // ===================================================
