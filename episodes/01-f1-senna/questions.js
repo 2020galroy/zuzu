@@ -57,7 +57,7 @@ function buildQuestions(sim) {
       fail: '❌ 3 ועוד 2 = ?'
     },
 
-    { subject: '🏁 מרוצים', tag: 'tag-racing',
+    { subject: '🏎️ מרוצי מכוניות', tag: 'tag-racing',
       text: 'כמה גלגלים יש למכונית F1?',
       data: '💡 ספור את הגלגלים בסרטון!',
       answers: shuffle([
@@ -70,7 +70,7 @@ function buildQuestions(sim) {
       fail: '❌ ספור שוב — קדמיים ואחוריים!'
     },
 
-    { subject: '🏁 מרוצים', tag: 'tag-racing',
+    { subject: '🏎️ מרוצי מכוניות', tag: 'tag-racing',
       text: 'מה הצבע של הדגל שמסמן סיום מירוץ?',
       data: '🏁 הנהג הראשון שרואה אותו — ניצח!',
       answers: shuffle([
@@ -83,7 +83,7 @@ function buildQuestions(sim) {
       fail: '❌ הדגל המשובץ בשחור-לבן הוא סיום המירוץ!'
     },
 
-    { subject: '🏁 מרוצים', tag: 'tag-racing',
+    { subject: '🏎️ מרוצי מכוניות', tag: 'tag-racing',
       text: 'איזה דגל אדום אומר ב-F1?',
       data: '🚦 לכל צבע דגל יש משמעות שונה',
       answers: shuffle([
@@ -200,7 +200,7 @@ function buildQuestions(sim) {
       fail: '❌ הוא כל כך גדול שאפשר לשים בו 1,300 כדורי ארץ!'
     },
 
-    { subject: '📚 ידע כללי', tag: 'tag-racing',
+    { subject: '📚 ידע כללי', tag: 'tag-general',
       text: 'סנה בא מברזיל. מה השפה שמדברים בברזיל?',
       data: '🇧🇷 ברזיל — מדינה ייחודית בדרום אמריקה',
       answers: shuffle([
@@ -402,7 +402,7 @@ function buildQuestions(sim) {
       fail: `❌ 150 מיליון ÷ ${sim.f1Speed} ÷ 8,760 שעות בשנה = ?`
     },
 
-    { subject: '📚 ידע כללי', tag: 'tag-racing',
+    { subject: '📚 ידע כללי', tag: 'tag-general',
       text: 'באיזה ספורט עוד יש פניות מהירות מאוד שמשתמשות בפיזיקה של כוח צנטריפטלי?',
       data: '🔄 כוח צנטריפטלי קיים בהרבה מקומות!',
       answers: shuffle([
@@ -415,7 +415,7 @@ function buildQuestions(sim) {
       fail: '❌ חשוב על ספורטים שכוללים פניות מהירות...'
     },
 
-    { subject: '📚 ידע כללי', tag: 'tag-racing',
+    { subject: '📚 ידע כללי', tag: 'tag-general',
       text: 'כמה ק"מ נוסעת מכונית F1 במרוץ ממוצע?',
       data: '🏁 מרוץ F1 הוא סביב 300 ק"מ',
       answers: shuffle([
@@ -582,7 +582,7 @@ function buildQuestions(sim) {
       fail: `❌ 1,080,000,000 ÷ ${sim.f1Speed} = ?`
     },
 
-    { subject: '📚 ידע כללי', tag: 'tag-racing',
+    { subject: '📚 ידע כללי', tag: 'tag-general',
       text: 'כמה קבוצות (צוותים) משתתפות בעונת F1 2024?',
       data: '🏎️ כל קבוצה מפעילה 2 מכוניות',
       answers: shuffle([
@@ -758,7 +758,7 @@ function buildQuestions(sim) {
       fail: `❌ 40,320 ÷ ${sim.f1Speed} = ?`
     },
 
-    { subject: '📚 ידע כללי', tag: 'tag-racing',
+    { subject: '🎯 אסטרטגיה', tag: 'tag-strategy',
       text: `סנה נכנס לפנייה ב-${sim.f1Speed} קמ"ש. יש מתחרה בצידו הפנימי. מה ההחלטה הנכונה?`,
       data: `<span class="hi">מהיר מדי:</span> יוצא מהמסלול<br><span class="whi">איטי מדי:</span> מתחרה עובר<br><span style="color:#2ecc71">מדויק:</span> שומר עמדה`,
       answers: shuffle([
@@ -771,7 +771,7 @@ function buildQuestions(sim) {
       fail: '❌ מהירות פחות שליטה בפנייה = תאונה. מה עדיף?'
     },
 
-    { subject: '📚 ידע כללי', tag: 'tag-racing',
+    { subject: '📚 ידע כללי', tag: 'tag-general',
       text: 'מה ה-DRS ב-F1 המודרני וכיצד הוא עוזר לעקיפה?',
       data: '🔧 DRS = Drag Reduction System',
       answers: shuffle([

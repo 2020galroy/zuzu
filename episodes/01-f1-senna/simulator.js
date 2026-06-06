@@ -102,7 +102,9 @@ canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4p
 .tag-physics { background:#fff4e0; color:#c4880a; }
 .tag-geo     { background:#e8fff0; color:#1a8a47; }
 .tag-racing  { background:#fff0e8; color:#c04020; }
-.tag-astro   { background:#f0e8ff; color:#7d3c98; }
+.tag-astro     { background:#f0e8ff; color:#7d3c98; }
+.tag-general   { background:#e8f8ff; color:#1a6a9a; }
+.tag-strategy  { background:#fffbe8; color:#8a6a00; }
 .q-text { font-size:22px; font-weight:bold; color:#1a1a2e; margin-bottom:12px; line-height:1.5; }
 .q-data-box { background:#f8f8f8; border-right:4px solid #e0e0e0; border-radius:8px; padding:14px 16px; margin-bottom:18px; font-size:15px; line-height:2; color:#444; }
 .q-data-box .hi  { color:#d4880a; font-weight:bold; }
