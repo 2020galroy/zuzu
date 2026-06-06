@@ -133,6 +133,53 @@ canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4p
 .whi   { color:#2176ae; font-weight:bold; }
 .green { color:#1a8a47; font-weight:bold; }
 .red   { color:#c0392b; font-weight:bold; }
+
+/* ── מובייל ── */
+@media (max-width: 600px) {
+  .sim-wrap { padding: 0 8px; }
+
+  /* layout אנכי */
+  .main-layout { flex-direction: column; align-items: stretch; gap: 10px; }
+
+  /* פאנלי מהירות — שניים בשורה */
+  .main-layout > div:first-child { flex-direction: row !important; }
+  .main-layout > div:first-child .panel { flex: 1; width: auto; min-width: 0; }
+
+  /* canvas — מוקטן לרוחב המסך */
+  .canvas-wrap { width: 100%; overflow: hidden; }
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+    display: block;
+  }
+  .legend { font-size: 11px; gap: 8px; }
+
+  /* HUD */
+  #speed-hud { flex-wrap: wrap; gap: 6px; }
+  .hud-box { flex: 1; min-width: 80px; padding: 6px 8px; }
+  .hud-box .hud-val { font-size: 16px; }
+
+  /* כפתור הרצה */
+  #run-btn { width: 100%; padding: 14px; font-size: 16px; }
+
+  /* שלושת פאנלי הפילטר — עמודה אחת */
+  .main-layout > div:last-child { flex-direction: column !important; gap: 8px; }
+  .main-layout > div:last-child > div { flex-direction: row !important; gap: 8px; }
+  .main-layout > div:last-child .panel { flex: 1; width: auto; min-width: 0; }
+  .main-layout > div:last-child .track-panel { width: 100%; flex: none; }
+  .track-panel .opt-btn { display: inline-block; width: auto; padding: 8px 10px; margin: 0 4px 6px 0; }
+  #track-radius-info { text-align: right; }
+
+  /* שאלות */
+  .q-opts { grid-template-columns: 1fr; }
+  .q-text { font-size: 18px; }
+  .q-btn  { font-size: 15px; padding: 14px; }
+
+  /* ציון */
+  #score-screen { margin: 10px 0; }
+  .score-big { font-size: 56px; }
+}
 </style>
 
 <div class="sim-wrap">
