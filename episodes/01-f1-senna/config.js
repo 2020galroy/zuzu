@@ -14,9 +14,9 @@ const EPISODE_CONFIG = {
 
   // --- סרטון YouTube ---
   video: {
-    id: 'LId5SKxljqs',     // YouTube ID
-    start: 25,             // שניית התחלה
-    title: 'סנה — מונזה 1992'
+    id: '5H4Ee5jY3YA',     // YouTube ID
+    start: 0,
+    title: 'סנה בפנייה'
   },
 
   // --- דמות מלווה ---

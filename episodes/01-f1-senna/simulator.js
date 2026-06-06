@@ -6,132 +6,163 @@ function loadSimulator() {
   const ep = document.getElementById('episode-content');
   ep.innerHTML = `
 <style>
-.sim-wrap { max-width: 680px; margin: 0 auto; }
-.video-wrap { margin-bottom: 20px; }
-.video-wrap iframe { border-radius: 10px; max-width: 100%; }
+.sim-wrap { max-width: 720px; margin: 0 auto; }
+
+/* סרטון */
+.video-wrap { margin-bottom: 20px; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.video-wrap iframe { border-radius: 14px; max-width: 100%; display: block; }
 
 /* פאנלים */
 .main-layout { display:flex; justify-content:center; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
-.panel { background:#1e1e1e; border:1px solid #333; border-radius:10px; padding:14px 12px; width:175px; text-align:right; }
-.panel.f1-panel    { border-top:3px solid #f5a623; }
-.panel.mazda-panel { border-top:3px solid #ffffff; }
-.panel.weather-panel { border-top:3px solid #555; }
-.panel h3 { font-size:13px; margin-bottom:12px; border-bottom:1px solid #333; padding-bottom:6px; }
-.f1-panel h3    { color:#f5a623; }
-.mazda-panel h3 { color:#ffffff; }
-.weather-panel h3 { color:#aaa; }
-.speed-value { font-size:28px; font-weight:bold; text-align:center; margin-bottom:2px; }
+.panel { background:#fff; border:2px solid #e8e8e8; border-radius:14px; padding:14px 12px; width:175px; text-align:right; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.panel.f1-panel    { border-top:4px solid #f5a623; }
+.panel.mazda-panel { border-top:4px solid #3498db; }
+.panel.weather-panel { border-top:4px solid #9b59b6; }
+.panel.track-panel  { border-top:4px solid #1abc9c; }
+.track-panel h3 { color:#0e8c7a; }
+.track-panel .opt-btn.selected { border-color:#1abc9c; background:#eafaf7; color:#0e8c7a; font-weight:bold; }
+.panel h3 { font-size:15px; font-weight:bold; margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:8px; color:#333; }
+.f1-panel h3      { color:#d4880a; }
+.mazda-panel h3   { color:#2176ae; }
+.weather-panel h3 { color:#7d3c98; }
+.speed-value { font-size:36px; font-weight:900; text-align:center; margin-bottom:2px; }
 .f1-panel    .speed-value { color:#f5a623; }
-.mazda-panel .speed-value { color:#ffffff; }
-.speed-unit { font-size:11px; color:#888; text-align:center; margin-bottom:10px; }
-.speed-sub  { font-size:10px; color:#666; text-align:center; margin-top:5px; }
-.f1-panel   .speed-sub { color:#a07020; }
-input[type=range] { width:100%; cursor:pointer; }
+.mazda-panel .speed-value { color:#3498db; }
+.speed-unit { font-size:13px; font-weight:bold; color:#aaa; text-align:center; margin-bottom:10px; }
+.speed-sub  { font-size:12px; color:#bbb; text-align:center; margin-top:5px; }
+.f1-panel   .speed-sub { color:#c4882a; }
+.mazda-panel .speed-sub { color:#5588bb; }
+input[type=range] { width:100%; cursor:pointer; height:6px; }
 .f1-panel    input[type=range] { accent-color:#f5a623; }
-.mazda-panel input[type=range] { accent-color:#cccccc; }
-.speed-labels { display:flex; justify-content:space-between; font-size:10px; color:#555; margin-top:3px; }
-.opt-btn { display:block; width:100%; padding:7px 10px; margin-bottom:7px; background:#2a2a2a;
-  border:2px solid #444; border-radius:7px; color:#ccc; font-size:12px; cursor:pointer;
+.mazda-panel input[type=range] { accent-color:#3498db; }
+.weather-panel input[type=range] { accent-color:#9b59b6; }
+.speed-labels { display:flex; justify-content:space-between; font-size:11px; color:#bbb; margin-top:4px; }
+.opt-btn { display:block; width:100%; padding:10px 12px; margin-bottom:8px; background:#f8f8f8;
+  border:2px solid #e0e0e0; border-radius:8px; color:#444; font-size:14px; font-weight:bold; cursor:pointer;
   text-align:right; transition:all 0.15s; }
-.opt-btn:hover { border-color:#888; color:#fff; }
-.f1-panel     .opt-btn.selected { border-color:#f5a623; background:#3a2e00; color:#f5a623; font-weight:bold; }
-.weather-panel .opt-btn.selected { border-color:#777; background:#2a2a2a; color:#fff; font-weight:bold; }
+.opt-btn:hover { border-color:#bbb; color:#222; background:#f0f0f0; }
+.f1-panel     .opt-btn.selected { border-color:#f5a623; background:#fff8ee; color:#c4880a; font-weight:bold; }
+.weather-panel .opt-btn.selected { border-color:#9b59b6; background:#f8f0ff; color:#7d3c98; font-weight:bold; }
 
 /* Canvas */
 .canvas-wrap { flex-shrink:0; }
-canvas { background:#1a6b1a; border-radius:12px; display:block; }
-.legend { display:flex; justify-content:center; gap:16px; margin:8px 0; font-size:12px; flex-wrap:wrap; }
+canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.legend { display:flex; justify-content:center; gap:16px; margin:8px 0; font-size:14px; font-weight:bold; flex-wrap:wrap; color:#444; }
 .legend-dot { width:12px; height:12px; border-radius:50%; display:inline-block; margin-left:5px; }
 
 /* HUD */
 #speed-hud { display:none; margin:8px auto 0; max-width:520px; gap:8px; justify-content:center; }
-.hud-box { background:#1e1e1e; border-radius:6px; padding:6px 12px; font-size:12px; border:1px solid #333; flex:1; }
-.hud-box .hud-label { color:#888; font-size:10px; margin-bottom:2px; }
-.hud-box .hud-val   { font-size:16px; font-weight:bold; }
-.hud-f1    { border-top:2px solid #f5a623; }
-.hud-mazda { border-top:2px solid #fff; }
+.hud-box { background:#fff; border-radius:10px; padding:8px 14px; font-size:12px; border:1px solid #e0e0e0; flex:1; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+.hud-box .hud-label { color:#aaa; font-size:12px; font-weight:bold; margin-bottom:2px; }
+.hud-box .hud-val   { font-size:20px; font-weight:900; color:#333; }
+.hud-f1    { border-top:3px solid #f5a623; }
+.hud-mazda { border-top:3px solid #3498db; }
 
 /* כפתור הרצה */
-#run-btn { display:block; margin:12px auto 0; padding:12px 42px; font-size:17px;
-  background:#e74c3c; color:#fff; border:none; border-radius:9px; cursor:pointer; transition:background 0.15s; }
-#run-btn:hover { background:#c0392b; }
+#run-btn { display:block; margin:12px auto 0; padding:13px 44px; font-size:17px;
+  background:linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; border:none; border-radius:10px;
+  cursor:pointer; transition:all 0.15s; box-shadow:0 3px 12px rgba(231,76,60,0.35); font-weight:bold; }
+#run-btn:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(231,76,60,0.45); }
+
+/* שלב מעבדה */
+#lab-banner { display:none; max-width:720px; margin:14px auto 0; background:#f0fff4;
+  border:2px solid #2ecc71; border-radius:14px; padding:18px 22px; text-align:right; box-shadow:0 2px 10px rgba(46,204,113,0.15); }
+#lab-banner h3 { color:#1a8a47; font-size:16px; margin-bottom:6px; }
+#lab-banner p  { color:#555; font-size:13px; margin:0 0 12px; line-height:1.6; }
+#lab-counter   { font-size:13px; color:#1a8a47; font-weight:bold; margin-bottom:12px; }
+#lab-go-quiz   { display:block; margin:0 auto; padding:12px 36px; font-size:16px;
+  background:linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; font-weight:bold; border:none; border-radius:10px; cursor:pointer; box-shadow:0 3px 10px rgba(46,204,113,0.3); }
+#lab-go-quiz:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(46,204,113,0.4); }
 
 /* מסך תוצאות */
-#results-screen { display:none; max-width:680px; margin:0 auto; }
-.insights-box { background:#1a1a1a; border-right:4px solid #f5a623; border-radius:10px; padding:20px; text-align:right; margin-bottom:16px; }
-.insights-box h3 { color:#f5a623; font-size:16px; margin-bottom:14px; }
-.compare-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
-.compare-table th { background:#2a2a2a; padding:8px 12px; color:#888; font-weight:normal; }
-.compare-table td { padding:8px 12px; border-top:1px solid #2a2a2a; }
-.compare-table tr:nth-child(even) td { background:#181818; }
-.f1-val  { color:#f5a623; font-weight:bold; }
-.maz-val { color:#fff; font-weight:bold; }
-.senna-quote { background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:18px 20px;
-  margin-bottom:20px; text-align:right; font-style:italic; font-size:15px; line-height:1.7; color:#ddd; }
-.senna-quote .credit { color:#f5a623; font-size:12px; margin-top:8px; font-style:normal; font-weight:bold; }
+#results-screen { display:none; max-width:720px; margin:0 auto; }
+.insights-box { background:#fff; border-right:5px solid #f5a623; border-radius:14px; padding:22px; text-align:right; margin-bottom:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+.insights-box h3 { color:#c4880a; font-size:19px; font-weight:bold; margin-bottom:14px; }
+.compare-table { width:100%; border-collapse:collapse; font-size:15px; margin-top:8px; }
+.compare-table th { background:#f8f8f8; padding:10px 12px; color:#666; font-weight:bold; border-bottom:2px solid #eee; }
+.compare-table td { padding:10px 12px; border-top:1px solid #f0f0f0; color:#333; font-weight:500; }
+.compare-table tr:nth-child(even) td { background:#fafafa; }
+.f1-val  { color:#d4880a; font-weight:bold; }
+.maz-val { color:#2176ae; font-weight:bold; }
+.senna-quote { background:#fff8ee; border:2px solid #f5a623; border-radius:14px; padding:20px 22px;
+  margin-bottom:20px; text-align:right; font-style:italic; font-size:17px; line-height:1.9; color:#444; box-shadow:0 2px 10px rgba(245,166,35,0.12); }
+.senna-quote .credit { color:#d4880a; font-size:12px; margin-top:10px; font-style:normal; font-weight:bold; }
 
 /* חגיגה */
-.celebration { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; }
-.confetti-piece { position:absolute; width:10px; height:10px; border-radius:2px; animation:fall 1.5s ease-in forwards; }
+.confetti-piece { position:fixed; width:10px; height:10px; border-radius:2px; animation:fall 1.5s ease-in forwards; z-index:999; pointer-events:none; }
 @keyframes fall { to { transform:translateY(100vh) rotate(720deg); opacity:0; } }
 
 /* שאלות */
-#quiz-area { max-width:680px; margin:0 auto; }
-.q-card { display:none; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; padding:24px 22px; text-align:right; }
+#quiz-area { max-width:720px; margin:0 auto; }
+.q-card { display:none; background:#fff; border:1px solid #e8e8e8; border-radius:16px; padding:26px 24px; text-align:right; box-shadow:0 3px 14px rgba(0,0,0,0.07); }
 .q-card.active { display:block; }
-.q-num { font-size:11px; color:#666; margin-bottom:6px; letter-spacing:1px; }
-.q-subject-tag { display:inline-block; padding:3px 10px; border-radius:4px; font-size:11px; font-weight:bold; margin-bottom:12px; }
-.tag-math    { background:#1a2a3a; color:#66aaff; }
-.tag-physics { background:#2a1a00; color:#f5a623; }
-.tag-geo     { background:#1a2a1a; color:#66cc66; }
-.tag-racing  { background:#2a2a1a; color:#cccc44; }
-.q-text { font-size:17px; font-weight:bold; color:#fff; margin-bottom:8px; line-height:1.5; }
-.q-data-box { background:#141414; border-right:3px solid #444; border-radius:6px; padding:12px 14px; margin-bottom:16px; font-size:13px; line-height:1.8; color:#ccc; }
-.q-data-box .hi  { color:#f5a623; font-weight:bold; }
-.q-data-box .whi { color:#fff; font-weight:bold; }
-.q-opts { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-.q-btn { padding:12px 16px; font-size:14px; background:#222; border:2px solid #333; border-radius:8px; color:#ddd; cursor:pointer; transition:all 0.15s; text-align:right; }
-.q-btn:hover:not(:disabled) { border-color:#555; background:#2a2a2a; color:#fff; }
+.q-num { font-size:13px; color:#bbb; font-weight:bold; margin-bottom:6px; letter-spacing:1px; }
+.q-subject-tag { display:inline-block; padding:5px 14px; border-radius:6px; font-size:13px; font-weight:bold; margin-bottom:14px; }
+.tag-math    { background:#e8f0ff; color:#2255cc; }
+.tag-physics { background:#fff4e0; color:#c4880a; }
+.tag-geo     { background:#e8fff0; color:#1a8a47; }
+.tag-racing  { background:#fff0e8; color:#c04020; }
+.q-text { font-size:22px; font-weight:bold; color:#1a1a2e; margin-bottom:12px; line-height:1.5; }
+.q-data-box { background:#f8f8f8; border-right:4px solid #e0e0e0; border-radius:8px; padding:14px 16px; margin-bottom:18px; font-size:15px; line-height:2; color:#444; }
+.q-data-box .hi  { color:#d4880a; font-weight:bold; }
+.q-data-box .whi { color:#2176ae; font-weight:bold; }
+.q-opts { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.q-btn { padding:16px 18px; font-size:17px; background:#f8f8f8; border:2px solid #e0e0e0; border-radius:12px; color:#333; cursor:pointer; transition:all 0.15s; text-align:right; font-weight:600; }
+.q-btn:hover:not(:disabled) { border-color:#bbb; background:#f0f0f0; }
 .q-btn:disabled { cursor:default; }
-.q-btn.correct { border-color:#2ecc71; background:#0d2a1a; color:#2ecc71; font-weight:bold; }
-.q-btn.wrong   { border-color:#e74c3c; background:#2a0a0a; color:#e74c3c; }
-.q-btn.reveal  { border-color:#2ecc71; background:#0d2a1a; color:#2ecc71; opacity:0.7; }
-.q-feedback { font-size:14px; min-height:22px; margin-bottom:12px; line-height:1.6; padding-right:4px; }
-.q-feedback.ok   { color:#2ecc71; }
-.q-feedback.fail { color:#e74c3c; }
-#next-btn { display:none; margin:0 auto 20px; padding:11px 36px; font-size:15px;
-  background:#f5a623; color:#111; font-weight:bold; border:none; border-radius:8px; cursor:pointer; }
-#next-btn:hover { background:#ffb733; }
+.q-btn.correct { border-color:#2ecc71; background:#eafaf1; color:#1a8a47; font-weight:bold; }
+.q-btn.wrong   { border-color:#e74c3c; background:#fef0ef; color:#c0392b; }
+.q-btn.reveal  { border-color:#2ecc71; background:#eafaf1; color:#1a8a47; opacity:0.75; }
+.q-feedback { font-size:16px; font-weight:bold; min-height:24px; margin-bottom:14px; line-height:1.6; padding-right:4px; }
+.q-feedback.ok   { color:#1a8a47; }
+.q-feedback.fail { color:#c0392b; }
+#next-btn { display:none; margin:0 auto 20px; padding:12px 40px; font-size:16px;
+  background:linear-gradient(135deg,#f5a623,#e67e22); color:#fff; font-weight:bold; border:none; border-radius:10px; cursor:pointer; box-shadow:0 3px 10px rgba(245,166,35,0.3); }
+#next-btn:hover { transform:translateY(-1px); }
 
 /* ציון */
 #score-screen { display:none; max-width:480px; margin:20px auto; text-align:center;
-  background:#1a1a1a; border-radius:14px; padding:30px 24px; border:1px solid #333; }
-#score-screen h2 { font-size:22px; color:#f5a623; margin-bottom:10px; }
-.score-big { font-size:60px; font-weight:bold; margin:16px 0; }
-.score-msg { font-size:15px; color:#aaa; margin-bottom:20px; line-height:1.6; }
-#restart-btn { padding:12px 36px; font-size:16px; background:#333; color:#fff; border:1px solid #555; border-radius:9px; cursor:pointer; }
-#restart-btn:hover { background:#444; }
+  background:#fff; border-radius:18px; padding:32px 26px; box-shadow:0 6px 30px rgba(0,0,0,0.10); }
+#score-screen h2 { font-size:28px; font-weight:bold; color:#d4880a; margin-bottom:10px; }
+.score-big { font-size:72px; font-weight:900; margin:16px 0; }
+.score-msg { font-size:18px; color:#555; margin-bottom:22px; line-height:1.6; font-weight:500; }
+#restart-btn { padding:13px 40px; font-size:16px; background:#f8f8f8; color:#333; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; font-weight:bold; }
+#restart-btn:hover { background:#f0f0f0; border-color:#ccc; }
 
-.hi    { color:#f5a623; font-weight:bold; }
-.whi   { color:#fff; font-weight:bold; }
-.green { color:#2ecc71; font-weight:bold; }
-.red   { color:#e74c3c; font-weight:bold; }
+.hi    { color:#d4880a; font-weight:bold; }
+.whi   { color:#2176ae; font-weight:bold; }
+.green { color:#1a8a47; font-weight:bold; }
+.red   { color:#c0392b; font-weight:bold; }
 </style>
 
 <div class="sim-wrap">
 
-  <!-- סרטון -->
-  <div class="video-wrap">
-    <iframe width="560" height="315"
-      src="https://www.youtube.com/embed/${EPISODE_CONFIG.video.id}?start=${EPISODE_CONFIG.video.start}&autoplay=1&mute=1&controls=1&modestbranding=1&rel=0"
-      frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <!-- שלב 0: סרטון -->
+  <div id="phase0" style="max-width:640px;margin:0 auto 0;">
+    <div class="video-wrap" style="background:#111;border-radius:14px;overflow:hidden;margin-bottom:16px;">
+      <div style="position:relative;padding-bottom:56.25%;height:0;">
+        <iframe
+          style="position:absolute;top:0;right:0;width:100%;height:100%;"
+          src="https://www.youtube.com/embed/${EPISODE_CONFIG.video.id}?start=${EPISODE_CONFIG.video.start}&autoplay=1&mute=1&controls=1&modestbranding=1&rel=0"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+    <button onclick="startSimulator()" style="display:block;margin:0 auto 24px;padding:15px 52px;
+      font-size:19px;font-weight:bold;background:linear-gradient(135deg,#f5a623,#e74c3c);
+      color:#fff;border:none;border-radius:12px;cursor:pointer;
+      box-shadow:0 4px 16px rgba(245,166,35,0.4);letter-spacing:0.5px;">
+      🏎️ בוא נשחק עם הפיזיקה!
+    </button>
   </div>
 
   <!-- שלב 1: סימולטור -->
-  <div id="phase1">
+  <div id="phase1" style="display:none;">
     <div class="main-layout">
 
-      <!-- F1 -->
+      <!-- F1 מהירות + מכונית אבא -->
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="panel f1-panel">
           <h3>🏎️ F1 של סנה</h3>
@@ -142,11 +173,14 @@ canvas { background:#1a6b1a; border-radius:12px; display:block; }
           <div class="speed-sub" id="f1-apex-disp">Apex: ~180 קמ"ש</div>
           <div class="speed-sub" id="f1-exit-disp">יציאה: ~225 קמ"ש</div>
         </div>
-        <div class="panel f1-panel">
-          <h3>🔧 צמיגי F1</h3>
-          <button class="opt-btn selected" onclick="selTire(this,'slicks')">🔴 Slicks מירוץ</button>
-          <button class="opt-btn" onclick="selTire(this,'rain')">🔵 צמיגי גשם</button>
-          <button class="opt-btn" onclick="selTire(this,'road')">⚫ צמיגי כביש</button>
+        <div class="panel mazda-panel">
+          <h3>🚗 מכונית אבא</h3>
+          <div class="speed-value" id="maz-spd-disp">120</div>
+          <div class="speed-unit">קמ"ש כניסה</div>
+          <input type="range" id="maz-slider" min="40" max="200" step="10" value="120" oninput="updateMaz(this.value)">
+          <div class="speed-labels"><span>40</span><span>120</span><span>200</span></div>
+          <div class="speed-sub" id="maz-apex-disp">Apex: ~74 קמ"ש</div>
+          <div class="speed-sub" id="maz-exit-disp">יציאה: ~94 קמ"ש</div>
         </div>
       </div>
 
@@ -176,26 +210,41 @@ canvas { background:#1a6b1a; border-radius:12px; display:block; }
         <button id="run-btn" onclick="startAnim()">▶ הרץ סימולציה</button>
       </div>
 
-      <!-- מזדה + מזג אוויר -->
+      <!-- צמיגים + מזג אוויר + מסלול -->
       <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="panel mazda-panel">
-          <h3>🚗 מכונית אבא</h3>
-          <div class="speed-value" id="maz-spd-disp">120</div>
-          <div class="speed-unit">קמ"ש כניסה</div>
-          <input type="range" id="maz-slider" min="40" max="200" step="10" value="120" oninput="updateMaz(this.value)">
-          <div class="speed-labels"><span>40</span><span>120</span><span>200</span></div>
-          <div class="speed-sub" id="maz-apex-disp">Apex: ~74 קמ"ש</div>
-          <div class="speed-sub" id="maz-exit-disp">יציאה: ~94 קמ"ש</div>
-        </div>
-        <div class="panel weather-panel">
-          <h3>🌤️ מזג אוויר</h3>
-          <button class="opt-btn selected" onclick="selWeather(this,'dry')">☀️ יבש</button>
-          <button class="opt-btn" onclick="selWeather(this,'wet')">🌧️ גשום</button>
-          <button class="opt-btn" onclick="selWeather(this,'storm')">⛈️ סופה</button>
+        <div style="display:flex;gap:10px;">
+          <div class="panel f1-panel" style="flex:1;min-width:0;">
+            <h3>🔧 צמיגים</h3>
+            <button class="opt-btn selected" onclick="selTire(this,'slicks')">🔴 מירוץ</button>
+            <button class="opt-btn" onclick="selTire(this,'rain')">🔵 גשם</button>
+            <button class="opt-btn" onclick="selTire(this,'road')">⚫ כביש</button>
+          </div>
+          <div class="panel weather-panel" style="flex:1;min-width:0;">
+            <h3>🌤️ מזג אוויר</h3>
+            <button class="opt-btn selected" onclick="selWeather(this,'dry')">☀️ יבש</button>
+            <button class="opt-btn" onclick="selWeather(this,'wet')">🌧️ גשום</button>
+            <button class="opt-btn" onclick="selWeather(this,'storm')">⛈️ סופה</button>
+          </div>
+          <div class="panel track-panel" style="flex:1;min-width:0;">
+            <h3>🏁 מסלול</h3>
+            <button class="opt-btn" onclick="selTrack(this,50,'מונאקו','🇲🇨 מונאקו')">🇲🇨 מונאקו</button>
+            <button class="opt-btn" onclick="selTrack(this,150,'Eau Rouge','🇧🇪 Eau Rouge')">🇧🇪 Eau Rouge</button>
+            <button class="opt-btn selected" onclick="selTrack(this,250,'מונזה','🇮🇹 מונזה')">🇮🇹 מונזה</button>
+            <div style="font-size:11px;color:#aaa;margin-top:6px;text-align:center;" id="track-radius-info">רדיוס: 250 מ'</div>
+          </div>
         </div>
       </div>
 
     </div>
+  </div>
+
+  <!-- שלב מעבדה: אחרי ריצה ראשונה -->
+  <div id="lab-banner">
+    <h3>🔬 רוצה לנסות שוב עם הגדרות אחרות?</h3>
+    <p>מה קורה אם תגדיל את המהירות? ואם תחליף צמיגים? ואם ירד גשם?<br>
+    כל ניסוי מלמד אותך משהו חדש.</p>
+    <div id="lab-counter"></div>
+    <button id="lab-go-quiz" onclick="goToQuiz()">✅ סיימתי לנסות — בוא לשאלות!</button>
   </div>
 
   <!-- שלב 2: תוצאות + שאלות -->
@@ -233,6 +282,12 @@ canvas { background:#1a6b1a; border-radius:12px; display:block; }
 </div><!-- end sim-wrap -->
 `;
 
+  window.startSimulator = function() {
+    document.getElementById('phase0').style.display = 'none';
+    document.getElementById('phase1').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   initSimulator();
 }
 
@@ -244,11 +299,11 @@ function initSimulator() {
   const canvas = document.getElementById('track');
   const ctx    = canvas.getContext('2d');
 
-  let f1Speed = 290, mazSpeed = 120, tireType = 'slicks', weather = 'dry';
+  let f1Speed = 290, mazSpeed = 120, tireType = 'slicks', weather = 'dry', trackRadius = 250;
   let animFrame = null;
   let _f1Makes, _mazMakes, _f1Grip, _mazGrip;
+  let _runCount = 0;
 
-  const RADIUS = EPISODE_CONFIG.simulator.cornerRadius;
   const G = 9.81;
 
   const F1_GRIP = {
@@ -258,7 +313,7 @@ function initSimulator() {
   };
   const MAZ_GRIP = { dry:0.85, wet:0.50, storm:0.28 };
 
-  const reqG  = kmh => { const ms = kmh/3.6; return (ms*ms)/(RADIUS*G); };
+  const reqG  = kmh => { const ms = kmh/3.6; return (ms*ms)/(trackRadius*G); };
   const apexS = e   => Math.round(e * 0.62);
   const exitS = e   => Math.round(e * 0.78);
   const avgS  = e   => (e + apexS(e) + exitS(e)) / 3;
@@ -287,6 +342,13 @@ function initSimulator() {
     document.querySelectorAll('.weather-panel .opt-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     weather = w;
+  };
+
+  window.selTrack = (btn, radius, name, label) => {
+    document.querySelectorAll('.track-panel .opt-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    trackRadius = radius;
+    document.getElementById('track-radius-info').textContent = `רדיוס פנייה: ${radius} מטר`;
   };
 
   // ---- ציור מסלול ----
@@ -471,7 +533,8 @@ function initSimulator() {
       if (tF1 < 1.35 || tMaz < 1.35) {
         animFrame = requestAnimationFrame(animate);
       } else {
-        showResults(f1Speed, mazSpeed, _f1Makes, _mazMakes, _f1Grip, tireType, weather);
+        _runCount++;
+        showLabBanner(f1Speed, mazSpeed, _f1Makes, _mazMakes, _f1Grip, tireType, weather, trackRadius);
       }
     }
     animFrame = requestAnimationFrame(animate);
@@ -481,9 +544,50 @@ function initSimulator() {
 }
 
 // ===================================================
+// שלב מעבדה
+// ===================================================
+let _lastSimArgs = null;
+
+function showLabBanner(f1Speed, mazSpeed, f1Makes, mazMakes, f1Grip, tireType, weather, trackRadius) {
+  _lastSimArgs = { f1Speed, mazSpeed, f1Makes, mazMakes, f1Grip, tireType, weather, trackRadius };
+
+  document.getElementById('run-btn').style.display = 'block';
+  document.getElementById('run-btn').textContent = '🔄 נסה שוב עם הגדרות אחרות';
+  document.getElementById('speed-hud').style.display = 'none';
+
+  const banner = document.getElementById('lab-banner');
+  banner.style.display = 'block';
+
+  const runCount = document.getElementById('run-btn').dataset.runCount
+    ? +document.getElementById('run-btn').dataset.runCount
+    : 1;
+  document.getElementById('run-btn').dataset.runCount = runCount;
+
+  const labels = ['🔬 ניסוי ראשון', '🧪 ניסוי שני', '🏆 ניסוי שלישי', '🚀 מדען F1 אמיתי!'];
+  const idx = Math.min(runCount - 1, labels.length - 1);
+  const msgs = [
+    'ניסית פעם אחת — מה קורה אם תחליף צמיגים? ואם ירד גשם?',
+    'ניסית פעמיים — אתה מתחיל להבין! עוד ניסוי אחד?',
+    'שלושה ניסויים! אתה מדען F1 אמיתי. מוכן לשאלות?',
+    'וואו — כל כך הרבה ניסויים! סנה היה גאה. מוכן לשאלות?'
+  ];
+  document.getElementById('lab-counter').textContent = labels[idx] + ' — ' + msgs[idx];
+  document.getElementById('run-btn').dataset.runCount = runCount + 1;
+}
+
+window.goToQuiz = function() {
+  document.getElementById('lab-banner').style.display = 'none';
+  document.getElementById('run-btn').style.display = 'none';
+  if (_lastSimArgs) {
+    const a = _lastSimArgs;
+    showResults(a.f1Speed, a.mazSpeed, a.f1Makes, a.mazMakes, a.f1Grip, a.tireType, a.weather, a.trackRadius);
+  }
+};
+
+// ===================================================
 // תוצאות
 // ===================================================
-function showResults(f1Speed, mazSpeed, f1Makes, mazMakes, f1Grip, tireType, weather) {
+function showResults(f1Speed, mazSpeed, f1Makes, mazMakes, f1Grip, tireType, weather, trackRadius) {
   document.getElementById('speed-hud').style.display = 'none';
   document.getElementById('phase1').style.display    = 'none';
   document.getElementById('phase2').style.display    = 'block';
@@ -493,7 +597,7 @@ function showResults(f1Speed, mazSpeed, f1Makes, mazMakes, f1Grip, tireType, wea
   const avgS  = e => (e + apexS(e) + exitS(e)) / 3;
   const MAZ_GRIP = { dry:0.85, wet:0.50, storm:0.28 };
   const CORNER = EPISODE_CONFIG.simulator.cornerLength;
-  const reqG = kmh => { const ms=kmh/3.6; return (ms*ms)/(250*9.81); };
+  const reqG = kmh => { const ms=kmh/3.6; return (ms*ms)/(_lastSimArgs.trackRadius*9.81); };
 
   const f1Time  = Math.round(CORNER / (avgS(f1Speed)/3.6));
   const mazTime = Math.round(CORNER / (avgS(mazSpeed)/3.6));
@@ -642,11 +746,18 @@ function restartAll() {
   if (window.animFrame) cancelAnimationFrame(window.animFrame);
   document.getElementById('phase1').style.display = 'block';
   document.getElementById('phase2').style.display = 'none';
-  document.getElementById('run-btn').style.display = 'block';
+  const runBtn = document.getElementById('run-btn');
+  runBtn.style.display = 'block';
+  runBtn.textContent = '▶ הרץ סימולציה';
+  runBtn.dataset.runCount = '1';
+  document.getElementById('lab-banner').style.display = 'none';
+  document.getElementById('lab-counter').textContent = '';
   document.getElementById('speed-hud').style.display = 'none';
+  document.getElementById('phase1').style.display = 'block';
   document.getElementById('score-screen').style.display = 'none';
   document.getElementById('results-screen').style.display = 'none';
   document.getElementById('quiz-area').innerHTML = '';
+  _lastSimArgs = null;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
