@@ -154,6 +154,21 @@ canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4p
 .green { color:#1a8a47; font-weight:bold; }
 .red   { color:#c0392b; font-weight:bold; }
 
+/* ── ציטוטים ── */
+.zuzu-quote { background:#fffbe8; border-right:3px solid #f5a623; border-radius:8px;
+  padding:10px 12px; margin-top:10px; text-align:right; }
+.zuzu-quote-text { display:block; font-style:italic; font-size:14px; color:#555; line-height:1.6; }
+.zuzu-quote-author { display:block; font-size:12px; color:#aaa; font-weight:bold; margin-top:4px; }
+
+/* toast ציטוט מהיר */
+#quote-toast { position:fixed; bottom:24px; right:50%; transform:translateX(50%);
+  max-width:400px; width:90vw; background:#1a1a2e; color:#fff;
+  border-radius:14px; padding:14px 18px; box-shadow:0 8px 30px rgba(0,0,0,0.25);
+  z-index:9999; text-align:right; opacity:0; pointer-events:none;
+  transition:opacity 0.3s; }
+#quote-toast .qt-text { font-style:italic; font-size:14px; color:#eee; line-height:1.6; }
+#quote-toast .qt-author { font-size:12px; color:#f5a623; font-weight:bold; margin-top:6px; display:block; }
+
 /* ── מובייל ── */
 @media (max-width: 600px) {
   .sim-wrap { padding: 0 8px; }
@@ -400,7 +415,19 @@ canvas { background:#2d8a2d; border-radius:14px; display:block; box-shadow: 0 4p
   </div>
 
 </div><!-- end sim-wrap -->
+<div id="quote-toast"><div class="qt-text" id="qt-text"></div><span class="qt-author" id="qt-author"></span></div>
 `;
+
+  window.showQuoteToast = function(tags) {
+    const q = getQuote(tags);
+    if (!q) return;
+    const toast = document.getElementById('quote-toast');
+    document.getElementById('qt-text').textContent = `"${q.text}"`;
+    document.getElementById('qt-author').textContent = `— ${q.author}`;
+    toast.style.opacity = '1';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 4000);
+  };
 
   window.startSimulator = function() {
     document.getElementById('phase0').style.display = 'none';
@@ -459,6 +486,7 @@ function initSimulator() {
     btn.classList.add('selected');
     tireType = t;
     updatePhysicsBar();
+    showQuoteToast(['filter', 'racing', 'physics']);
   };
 
   window.selWeather = (btn, w) => {
@@ -466,6 +494,7 @@ function initSimulator() {
     btn.classList.add('selected');
     weather = w;
     updatePhysicsBar();
+    showQuoteToast(['filter', 'physics']);
   };
 
   window.selTrack = (btn, radius, name) => {
@@ -480,6 +509,7 @@ function initSimulator() {
     else if (radius === 150) arc.style.borderRadius = '0 0 0 70%';
     else                     arc.style.borderRadius = '0 0 0 45%';
     updatePhysicsBar();
+    showQuoteToast(['filter', 'racing', 'lab']);
   };
 
   function updatePhysicsBar() {
@@ -839,20 +869,20 @@ function answerQuestion(i, btn, ok, okMsg, failMsg) {
 
   if (ok) {
     btn.classList.add('correct');
-    fb.innerHTML = okMsg;
+    const subjectTag = _questions[i].tag.replace('tag-','');
+    const q = getQuote(['correct', subjectTag]);
+    fb.innerHTML = okMsg + (q ? renderQuote(q) : '');
     fb.className = 'q-feedback ok';
     _score++;
     celebrate();
   } else {
     btn.classList.add('wrong');
-    fb.innerHTML = failMsg;
-    fb.className = 'q-feedback fail';
-    // הראה את התשובה הנכונה
     opts.forEach(b => {
-      if (b.textContent === _questions[i].answers.find(a => a.ok).t) {
-        b.classList.add('reveal');
-      }
+      if (b.textContent === _questions[i].answers.find(a => a.ok).t) b.classList.add('reveal');
     });
+    const q = getQuote(['fail']);
+    fb.innerHTML = failMsg + (q ? renderQuote(q) : '');
+    fb.className = 'q-feedback fail';
   }
 
   if (i < _questions.length - 1) {
@@ -890,7 +920,9 @@ function showScore() {
     0: `😄 אפס — אבל גם סנה התחיל מאפס!`
   };
 
-  document.getElementById('score-msg').textContent = msgs[_score] || 'כל הכבוד!';
+  const scoreQ = getQuote(['score', pct === 1 ? 'correct' : 'fail']);
+  document.getElementById('score-msg').innerHTML =
+    (msgs[_score] || 'כל הכבוד!') + (scoreQ ? renderQuote(scoreQ) : '');
 
   // שמירת ניקוד
   const saved = JSON.parse(localStorage.getItem('zuzu_player') || '{}');

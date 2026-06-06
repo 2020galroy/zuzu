@@ -23,8 +23,8 @@ const EPISODE_CONFIG = {
   character: {
     name: 'סנה',
     emoji: '🏎️',
-    quote: 'כשנכנסתי לפנייה הזו, לא חשבתי על הפחד. חשבתי על הפיזיקה.',
-    quoteCredit: 'Ayrton Senna, Monza 1992'
+    quote: 'אם אתה לא הולך לפרצה שקיימת — אתה כבר לא נהג מרוץ.',
+    quoteCredit: 'איירטון סנה, 1990'
   },
 
   // --- נתוני הסימולטור ---
